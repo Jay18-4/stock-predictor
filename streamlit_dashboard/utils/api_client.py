@@ -3,7 +3,7 @@ import streamlit as st # type: ignore
 from datetime import datetime
 
 # BASE_URL = "http://localhost:8000/api/v1"
-BASE_URL = https://stock-predictor-backend-2-k780.onrender.com/
+BASE_URL = "https://stock-predictor-backend-2-k780.onrender.com"
 
 # ---- Cache wrapper ----
 def daily_cache(key, fetch_fn):
