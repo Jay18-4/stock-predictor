@@ -1,11 +1,13 @@
 from fastapi import FastAPI # type: ignore
 from fastapi.middleware.cors import CORSMiddleware # type: ignore
 from fastapi import APIRouter #type: ignore
+import asyncio
+
 from .routers import predict, latest_data, history, news
 from app.middleware.logging_middleware import logging_middleware
 from app.middleware.error_middleware import error_middleware
 from app.core.logger import logger
-
+from app.finbert import load_finbert
 
 app = FastAPI(
     title="Stock Predictor API",
@@ -24,6 +26,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.on_event("startup")
+async def warmup():
+    loop = asyncio.get_event_loop()
+    loop.run_in_executor(None, load_finbert)
+
+@app.get("/")
+def health():
+    return {"status": "ok"}
+
 api_v1 = APIRouter(prefix="/api/v1")
 
 api_v1.include_router(history.router, tags=["History"])
@@ -37,4 +48,3 @@ app.middleware("http")(error_middleware)
 
 logger.info("Starting Stock Predictor API...")
 
-#uvicorn app.main:app --reload
