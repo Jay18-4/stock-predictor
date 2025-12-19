@@ -94,7 +94,3 @@ def tf_news_sentiment(df):
     df["score"] = scores
     
     return df
-
-
-# news_df = fetch_data.news_arrange()
-# news_sentiment = tf_news_sentiment(news_df)
