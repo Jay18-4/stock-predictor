@@ -1,7 +1,6 @@
 import tensorflow as tf
 from transformers import AutoTokenizer, TFAutoModelForSequenceClassification
 from tqdm import tqdm
-from finbert_loader import load_finbert
 
 # import fetch_data 
 from app.core.logger import logger
@@ -33,8 +32,7 @@ def tf_news_sentiment(df):
     text_column = "title"            # change if different
     
     # Clean NaN
-    df[text_column] = df[text_column].astype(str)
-    df[text_column] = df[text_column].fillna("")
+    df[text_column] = df[text_column].astype(str).fillna("")
     df = df.reset_index(drop=True)
     
     # ============================
