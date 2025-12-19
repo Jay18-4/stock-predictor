@@ -1,9 +1,32 @@
 import tensorflow as tf
 from transformers import AutoTokenizer, TFAutoModelForSequenceClassification
 from tqdm import tqdm
+from finbert_loader import load_finbert
 
 # import fetch_data 
 from app.core.logger import logger
+
+MODEL_ID = "ProsusAI/finbert"
+
+_tokenizer = None
+_model = None
+
+def load_finbert():
+    global _tokenizer, _model
+
+    if _tokenizer is None or _model is None:
+        print("Loading FinBERT model (this happens once)...")
+
+        _tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
+        _model = TFAutoModelForSequenceClassification.from_pretrained(
+            MODEL_ID,
+            from_pt=True  # converts PyTorch → TF
+        )
+
+        print("FinBERT loaded successfully")
+        print("GPU available:", tf.config.list_physical_devices("GPU"))
+
+    return _tokenizer, _model
 
 def tf_news_sentiment(df):
     logger.info(f"Conducting Sentiment Analysis")
@@ -17,16 +40,18 @@ def tf_news_sentiment(df):
     # ============================
     # 2. Load Model
     # ============================
-    model_name = "ProsusAI/finbert"
-    model_path = r"C:\Users\dalu\Desktop\finbert"
-    tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only = True)
-    model = TFAutoModelForSequenceClassification.from_pretrained(
-        model_path,
-        from_pt=True,
-        local_files_only=True# convert from PyTorch
-    )
+    #LOCAL USE
+    # model_name = "ProsusAI/finbert"
+    # model_path = r"C:\Users\dalu\Desktop\finbert"
+    # tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only = True)
+    # model = TFAutoModelForSequenceClassification.from_pretrained(
+    #     model_path,
+    #     from_pt=True,
+    #     local_files_only=True# convert from PyTorch
+    # )
+    #print("GPU available:", tf.config.list_physical_devices('GPU'))
     
-    print("GPU available:", tf.config.list_physical_devices('GPU'))
+    tokenizer, model = load_finbert()
     
     # ============================
     # 3. Parameters
