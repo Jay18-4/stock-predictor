@@ -4,11 +4,6 @@ __pycache__/
 .venv/
 env/
 
-# Models / data
-models/
-data/
-*.h5
-*.pkl
 
 # Logs
 logs/
