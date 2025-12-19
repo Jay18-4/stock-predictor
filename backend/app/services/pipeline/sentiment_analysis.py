@@ -4,36 +4,7 @@ from tqdm import tqdm
 import os
 
 from app.core.logger import logger
-
-MODEL_ID = "ProsusAI/finbert"
-MODEL_CACHE_DIR = os.path.join(os.path.expanduser("~"), ".finbert_cache")
-
-_tokenizer = None
-_model = None
-
-def load_finbert():
-    global _tokenizer, _model
-
-    if _tokenizer is None or _model is None:
-        logger.info("Loading FinBERT model (this happens once)...")
-
-        # Ensure cache directory exists
-        os.makedirs(MODEL_CACHE_DIR, exist_ok=True)
-
-        _tokenizer = AutoTokenizer.from_pretrained(
-            MODEL_ID,
-            cache_dir=MODEL_CACHE_DIR
-        )
-        _model = TFAutoModelForSequenceClassification.from_pretrained(
-            MODEL_ID,
-            from_pt=True,  # convert PyTorch → TF
-            cache_dir=MODEL_CACHE_DIR
-        )
-
-        logger.info("FinBERT loaded successfully")
-        logger.info("GPU available: %s", tf.config.list_physical_devices("GPU"))
-
-    return _tokenizer, _model
+from app.finbert import load_finbert
 
 def tf_news_sentiment(df):
     logger.info(f"Conducting Sentiment Analysis")
