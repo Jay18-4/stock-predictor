@@ -1,10 +1,10 @@
 import tensorflow as tf
-from transformers import AutoTokenizer, TFAutoModelForSequenceClassification
+# from transformers import AutoTokenizer, TFAutoModelForSequenceClassification
 from tqdm import tqdm
 import os
 
 from app.core.logger import logger
-from app.finbert import get_finbert
+from app.finbert import load_finbert
 
 def tf_news_sentiment(df):
     logger.info(f"Conducting Sentiment Analysis")
@@ -28,7 +28,7 @@ def tf_news_sentiment(df):
     # )
     #print("GPU available:", tf.config.list_physical_devices('GPU'))
     
-    tokenizer, model = get_finbert()
+    tokenizer, model = load_finbert()
     
     # ============================
     # 3. Parameters
