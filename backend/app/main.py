@@ -26,15 +26,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.on_event("startup")
-async def warmup():
-    loop = asyncio.get_event_loop()
-    loop.run_in_executor(None, load_finbert)
-
-@app.get("/")
-def health():
-    return {"status": "ok"}
-
 api_v1 = APIRouter(prefix="/api/v1")
 
 api_v1.include_router(history.router, tags=["History"])
