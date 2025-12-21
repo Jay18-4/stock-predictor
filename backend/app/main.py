@@ -8,7 +8,6 @@ from .routers import predict, latest_data, history, news
 from app.middleware.logging_middleware import logging_middleware
 from app.middleware.error_middleware import error_middleware
 from app.core.logger import logger
-from app.finbert import load_finbert
 
 
 app = FastAPI(
@@ -16,7 +15,7 @@ app = FastAPI(
     version="1.0.0"
 )
 
-port = int(os.environ.get("PORT", 4000))
+# port = int(os.environ.get("PORT", 4000))
 
 origins = [
     "*",  # Change to frontend domain later
@@ -43,6 +42,6 @@ app.middleware("http")(error_middleware)
 
 logger.info("Starting Stock Predictor API...")
 
-if __name__ == "__main__":
-    uvicorn.run("app.main:app", host="0.0.0.0", port=port)
+# if __name__ == "__main__":
+#     uvicorn.run("app.main:app", host="0.0.0.0", port=port)
 
