@@ -2,7 +2,6 @@ from fastapi import FastAPI # type: ignore
 from fastapi.middleware.cors import CORSMiddleware # type: ignore
 from fastapi import APIRouter #type: ignore
 import os
-import uvicorn
 
 from .routers import predict, latest_data, history, news
 from app.middleware.logging_middleware import logging_middleware
@@ -15,7 +14,6 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# port = int(os.environ.get("PORT", 4000))
 
 origins = [
     "*",  # Change to frontend domain later
@@ -41,7 +39,3 @@ app.middleware("http")(logging_middleware)
 app.middleware("http")(error_middleware)
 
 logger.info("Starting Stock Predictor API...")
-
-# if __name__ == "__main__":
-#     uvicorn.run("app.main:app", host="0.0.0.0", port=port)
-
