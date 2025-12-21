@@ -4,10 +4,13 @@ from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 import joblib
 import json
-from app.core.logger import logger
-from app.utils.time_utils import utc_now
+from datetime import date
 from pathlib import Path
 
+from app.core.logger import logger
+from app.utils.time_utils import utc_now
+from app.storage import read_csv, write_csv, read_json, write_json
+from app.model_loader import get_model, get_scaler
 
 
 # --- RESHAPE X_INPUT ---
@@ -47,21 +50,11 @@ def predict(df):
     df.drop(['Ticker',"High","Low","Open"],axis="columns",inplace=True)
     
     
-    # scaler_path = r"app\services\pipeline\models\scaler_v3.1.save"
-    # model_path = r"app\services\pipeline\models\v3.2(sentiment)_lstm_stock_pediction.keras"
+    # scaler_path = Path(__file__).resolve().parent.parent.parent.parent / "models" / "scaler_v3.1.save"
+    # model_path = Path(__file__).resolve().parent.parent.parent.parent / "models" / "v3.2(sentiment)_lstm_stock_pediction.keras"
     
-    scaler_path = Path(__file__).resolve().parent.parent.parent.parent / "models" / "scaler_v3.1.save"
-    model_path = Path(__file__).resolve().parent.parent.parent.parent / "models" / "v3.2(sentiment)_lstm_stock_pediction.keras"
-    
-    
-    # X_df = df.drop('Target',axis=1)
-    # X_df = X_df.select_dtypes(include=np.number)
-    # scaler = MinMaxScaler()
-    # scaler.fit_transform(X_df)
-    # joblib.dump(scaler, scaler_path)
-    
-    scaler = joblib.load(scaler_path)
-    model = load_model(model_path)
+    scaler = get_scaler()
+    model = get_model()
 
     
 # --- PREDICTION FOR TODAY ---
@@ -76,17 +69,9 @@ def predict(df):
     pred_value = (pred.ravel() >= 0.5).astype(int).tolist()
     
 # --- SAVE UPDATED HISTORICAL DATA ---
-    # data_history_path =r"app\services\pipeline\data\historical_data.csv"
-    data_history_path = Path(__file__).resolve().parent.parent.parent.parent / "data" / "historical_data.csv"
+    # data_history_path = Path(__file__).resolve().parent.parent.parent.parent / "data" / "historical_data.csv"
     
-    df.to_csv(data_history_path)
-    
-# --- MODEL VERSION --- 
-    # model_version = {
-    # "version": "v3.2(sentiment)_lstm_stock_pediction",
-    # }
-    # with open("app/services/pipeline/data/model_version.json", "w") as json_file:
-    #     json.dump(model_version, json_file, indent=4)
+    write_csv(df, "historical_data.csv")
     
     return pred_value
 
@@ -94,20 +79,22 @@ def predict(df):
 
 # --- STORING NEXT WEEK ---
 def store_next_week(df):
-    # next_week_path = r"app\services\pipeline\data\new_week_data.csv"
-    next_week_path = Path(__file__).resolve().parent.parent.parent.parent / "data" / "new_week_data.csv"
+    # next_week_path = Path(__file__).resolve().parent.parent.parent.parent / "data" / "new_week_data.csv"
 
-    new_week_data_df = pd.read_csv(next_week_path,index_col=0)
+    new_week_data_df = read_csv("new_week_data.csv")
     new_week_data_df = pd.concat([new_week_data_df,df.tail(4)],axis=0,ignore_index=True)
-    new_week_data_df.to_csv(next_week_path,index=False)
+    write_csv(df, "new_week_data.csv")
     
+    
+def get_new_week_daata():
+    new_week_data_df = read_csv("new_week_data.csv")
     new_week_data_df = new_week_data_df.drop_duplicates()
-    
     return new_week_data_df
 
-
-
-
+def get_historical_data():
+    df = read_csv("historical_data.csv")
+    df = df.drop_duplicates()
+    return df
 
 # --- RETRAIN MODEL IF WEEK IS COMPLETE ---
 # if len(new_week_data_df) >= 28:
@@ -118,9 +105,10 @@ def create_sequence(X, y, time_stamp=5):
         ys.append(y[i + time_stamp])
     return np.array(Xs), np.array(ys)
     
-def retrain(df, new_week_data_df):
+def retrain(df,new_week_df):
     df = df.drop_duplicates()
     df.drop(['Ticker',"High","Low","Open"],axis="columns",inplace=True)
+    df.set_index("data", inplace = True)
     
     scaler_path = Path(__file__).resolve().parent.parent.parent.parent / "models" / "scaler_v3.1.save"
     model_path = Path(__file__).resolve().parent.parent.parent.parent / "models" / "v3.2(sentiment)_lstm_stock_pediction.keras"
@@ -163,7 +151,7 @@ def retrain(df, new_week_data_df):
     model.evaluate(X_test_seq, y_test_seq)
     
     # Save updated model
-    timestamp = utc_now()
+    timestamp = date.today()
     model_path = Path(__file__).resolve().parent.parent.parent.parent / "models" / f"v3.2(sentiment)_lstm_stock_pediction_{timestamp}.keras"
     model.save(model_path)
     
@@ -171,15 +159,16 @@ def retrain(df, new_week_data_df):
     "version": f"v3.2(sentiment)_lstm_stock_pediction_{timestamp}",
     "trained_on": timestamp
     }
-    model_version_path = Path(__file__).resolve().parent.parent.parent.parent / "data" / f"model_version_{timestamp}.json"
-    with open("data/model_version.json", "w") as json_file:
-        json.dump(model_version, json_file, indent=4)
+    # model_version_path = Path(__file__).resolve().parent.parent.parent.parent / "data" / f"model_version_{timestamp}.json"
+    # with open("data/model_version.json", "w") as json_file:
+    #     json.dump(model_version, json_file, indent=4)
+    write_json(model_version, f"model_version_{timestamp}.json")
+    
     
     # Reset weekly data
-    next_week_path = Path(__file__).resolve().parent.parent.parent.parent / "data" / "new_week_data.csv"
-    pd.DataFrame(columns=new_week_data_df.columns).to_csv(next_week_path, index=False)
-    # clear_week =  pd.DataFrame(data=None, columns=new_week_data_df.columns,index=new_week_data_df.index)
-    # clear_week = clear_week.dropna()
-    # clear_week.to_csv('data/new_week_data.csv')
+    # next_week_path = Path(__file__).resolve().parent.parent.parent.parent / "data" / "new_week_data.csv"
+    clear_week = pd.DataFrame(columns=new_week_data_df.columns)
+    write_csv(clear_week, "new_week_data.csv")
+    
     
     return model_version
