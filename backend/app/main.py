@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware # type: ignore
 from fastapi import APIRouter #type: ignore
 import os
 
-from .routers import predict, latest_data, history, news
+from app.routers import predict, latest_data, history, news
 from app.middleware.logging_middleware import logging_middleware
 from app.middleware.error_middleware import error_middleware
 from app.core.logger import logger
