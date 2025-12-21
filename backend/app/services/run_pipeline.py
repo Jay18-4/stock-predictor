@@ -31,8 +31,9 @@ class PipelineRunner:
         return pred
 
     def retrain_weekly(self):
-        df = get_historical_data()
-        model.retrain(df)
+        df = model.get_historical_data()
+        new_week_df = model.get_new_week_daata()
+        model.retrain(df, new_week_df)
 
     def get_model_version(self):
         #LOCAL VERSION
