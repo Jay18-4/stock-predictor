@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException # type: ignore
-from ..services.run_pipeline import PipelineRunner
-from ..schemas.stock import LatestDataResponse, LatestRawData
+from app.services.run_pipeline import PipelineRunner
+from app.schemas.stock import LatestDataResponse, LatestRawData
 from app.core.logger import logger
 from app.utils.time_utils import utc_now
 
