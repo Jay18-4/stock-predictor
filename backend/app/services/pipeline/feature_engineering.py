@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from app.core.logger import logger
 from pathlib import Path
-from storage import read_csv, write_csv
+from app.storage import read_csv, write_csv
 
 from sklearn.preprocessing import MinMaxScaler
 import joblib
