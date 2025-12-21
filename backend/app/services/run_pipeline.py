@@ -30,8 +30,9 @@ class PipelineRunner:
         model.store_next_week(news_feat)
         return pred
 
-    def retrain_weekly(self, news_feat):
-        model.retrain(news_feat)
+    def retrain_weekly(self):
+        df = get_historical_data()
+        model.retrain(df)
 
     def get_model_version(self):
         #LOCAL VERSION
