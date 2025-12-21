@@ -3,6 +3,7 @@ import os
 import io
 import pandas as pd
 import boto3
+import json
 
 # Environment variables
 R2_BUCKET_NAME = os.getenv("R2_BUCKET_NAME")
@@ -33,3 +34,21 @@ def write_csv(df: pd.DataFrame, file_name: str):
     df.to_csv(csv_buffer, index=False)
     s3.put_object(Bucket=R2_BUCKET_NAME, Key=file_name, Body=csv_buffer.getvalue())
     print(f"[INFO] File {file_name} uploaded to R2 bucket {R2_BUCKET_NAME}.")
+
+
+def read_json(file_name: str):
+    """Download a JSON file from R2 and return as Python object."""
+    try:
+        obj = s3.get_object(Bucket=R2_BUCKET_NAME, Key=file_name)
+        return json.loads(obj['Body'].read().decode('utf-8'))
+    except s3.exceptions.NoSuchKey:
+        print(f"[WARN] File {file_name} not found in bucket. Returning empty dict.")
+        return {}
+
+def write_json(data, file_name: str):
+    """Upload a Python object as JSON to R2."""
+    json_buffer = io.StringIO()
+    json.dump(data, json_buffer)
+    s3.put_object(Bucket=R2_BUCKET_NAME, Key=file_name, Body=json_buffer.getvalue())
+    print(f"[INFO] File {file_name} uploaded to R2 bucket {R2_BUCKET_NAME}.")
+
