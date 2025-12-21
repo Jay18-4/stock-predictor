@@ -1,19 +1,21 @@
 import os
 import pandas as pd
 from datetime import date
+from pathlib import Path
+
 from app.core.logger import logger
 from app.services.run_pipeline import PipelineRunner
-from pathlib import Path
+from app.storage import read_csv, write_csv
 
 pipeline = PipelineRunner()
 
 model_version = pipeline.get_model_version()
-# HISTORY_PATH = rf"app/services/pipeline/data/prediction_history{model_version}_by_{date.today()}.csv"
-HISTORY_PATH = Path(__file__).resolve().parent.parent.parent / "data" / f"prediction_history_{model_version}.csv"
+# for local version
+# HISTORY_PATH = Path(__file__).resolve().parent.parent.parent / "data" / f"prediction_history_{model_version}.csv"
 
 
 # Ensure directory exists
-os.makedirs("data", exist_ok=True)
+# os.makedirs("data", exist_ok=True)
 
 # Define consistent columns
 COLUMNS = ["ticker", "predicted_price", "actual_price"]
@@ -38,22 +40,17 @@ def save_history_record(ticker: list, prediction: list,
     
     df = pd.concat([old_df,df], axis=0,ignore_index=True)
     
-    df.to_csv(HISTORY_PATH, index=False)
-    # if not os.path.exists(HISTORY_PATH):
-    #     df = pd.DataFrame([record])
-    #     df.to_csv(HISTORY_PATH, index=False)
-    # else:
-    #     df = pd.DataFrame([record])
-    #     df.to_csv(HISTORY_PATH, mode="a", header=False, index=False)
+    write_csv(df, f"prediction_history_{model_version}.csv")
+   
 
 
 def get_history(ticker: str | None = None):
     """Return prediction history filtered by ticker (if provided)."""
 
-    if not os.path.exists(HISTORY_PATH):
-        return []
+    df = read_csv(f"prediction_history_{model_version}.csv")
 
-    df = pd.read_csv(HISTORY_PATH)
+    if df.empty:
+        return []
 
     if ticker.upper() in df["ticker"].to_list():
         df = df[df["ticker"] == ticker.upper()]
