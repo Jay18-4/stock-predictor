@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from datetime import date
 from app.core.logger import logger
-from ..services.run_pipeline import PipelineRunner
+from app.services.run_pipeline import PipelineRunner
 from pathlib import Path
 
 pipeline = PipelineRunner()
