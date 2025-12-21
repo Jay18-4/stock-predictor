@@ -52,3 +52,29 @@ def write_json(data, file_name: str):
     s3.put_object(Bucket=R2_BUCKET_NAME, Key=file_name, Body=json_buffer.getvalue())
     print(f"[INFO] File {file_name} uploaded to R2 bucket {R2_BUCKET_NAME}.")
 
+
+def download_file(key: str, local_path: str):
+    """
+    Download any file (model, binary, etc.) from R2 to local disk
+    """
+    if os.path.exists(local_path):
+        print(f"[INFO] {local_path} already exists. Skipping download.")
+        return
+
+    os.makedirs(os.path.dirname(local_path), exist_ok=True)
+
+    with open(local_path, "wb") as f:
+        s3.download_fileobj(R2_BUCKET_NAME, key, f)
+
+    print(f"[INFO] Downloaded {key} -> {local_path}")
+
+
+def upload_file(local_path: str, key: str):
+    """
+    Upload any file (model, binary, etc.) to R2
+    """
+    with open(local_path, "rb") as f:
+        s3.upload_fileobj(f, R2_BUCKET_NAME, key)
+
+    print(f"[INFO] Uploaded {local_path} -> {key}")
+
