@@ -2,7 +2,7 @@
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
 
-MODEL_NAME = "ProsusAI/finbert"
+MODEL_NAME = "ProsusAI/finbert-lite"
 
 _tokenizer = None
 _model = None
