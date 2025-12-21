@@ -1,11 +1,6 @@
 import pandas as pd
 from app.core.logger import logger
 
-# import feature_engineering
-# import sentiment_analysis 
-
-# final_stocks_df = feature_engineering.feat_eng()
-# news_sentiment = sentiment_analysis.tf_news_sentiment()
 
 def compute_polarity(row):
     if row['sentiment'] == 'positive':
