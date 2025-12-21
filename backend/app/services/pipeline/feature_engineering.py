@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from app.core.logger import logger
 from pathlib import Path
+from storage import read_csv, write_csv
 
 from sklearn.preprocessing import MinMaxScaler
 import joblib
@@ -10,11 +11,12 @@ import joblib
 def feat_eng(df_APPL_new, df_TSLA_new, df_MSFT_new, df_NVDA_new):
     logger.info("Engineering Features")
     
-    data_folder = Path(__file__).resolve().parent.parent.parent.parent / "data" 
-    df_APPL_old = pd.read_csv(f'{data_folder}/clean_AAPL_stock_data.csv')
-    df_TSLA_old = pd.read_csv(f'{data_folder}/clean_TSLA_stock_data.csv')
-    df_MSFT_old = pd.read_csv(f'{data_folder}/clean_MSFT_stock_data.csv')
-    df_NVDA_old = pd.read_csv(f'{data_folder}/clean_NVDA_stock_data.csv')
+    # data_folder = Path(__file__).resolve().parent.parent.parent.parent / "data" 
+    
+    df_APPL_old = read_csv('clean_AAPL_stock_data.csv')
+    df_TSLA_old = read_csv('clean_TSLA_stock_data.csv')
+    df_MSFT_old = read_csv('clean_MSFT_stock_data.csv')
+    df_NVDA_old = read_csv('clean_NVDA_stock_data.csv')
 
     df_APPL = pd.concat([df_APPL_old,df_APPL_new], axis=0, ignore_index=True)
     df_TSLA = pd.concat([df_TSLA_old,df_TSLA_new], axis=0, ignore_index=True)
@@ -57,6 +59,3 @@ def feat_eng(df_APPL_new, df_TSLA_new, df_MSFT_new, df_NVDA_new):
 
 
 print('DONE!!')
-
-
-#change df structure get them individually hte do the interlevened data again
