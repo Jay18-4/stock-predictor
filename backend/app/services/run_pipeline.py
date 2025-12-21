@@ -2,6 +2,7 @@ import json
 from datetime import date
 from app.core.logger import logger
 from pathlib import Path
+from storage import read_json, write_json
 
 from .pipeline import (
     fetch_data,
@@ -16,7 +17,6 @@ class PipelineRunner:
     def fetch_latest(self):
         df_APPL_new,df_TSLA_new,df_MSFT_new,df_NVDA_new = fetch_data.fetch_stock()
         news_df = fetch_data.news_arrange()
-        # news_df = {'1':'yes','2':'NO','3':'OH','4':'YIPP'}
         return df_APPL_new,df_TSLA_new,df_MSFT_new,df_NVDA_new, news_df
 
     def process_features(self, df_APPL_new,df_TSLA_new,df_MSFT_new,df_NVDA_new, news_df):
@@ -34,8 +34,10 @@ class PipelineRunner:
         model.retrain(news_feat)
 
     def get_model_version(self):
-        path = Path(__file__).resolve().parent.parent.parent / "data" / "model_version.json"
+        #LOCAL VERSION
+        # path = Path(__file__).resolve().parent.parent.parent / "data" / "model_version.json"
         # path = "app/services/pipeline/data/model_version.json"
-        with open(path) as f:
-            data = json.load(f)
+        # with open(path) as f:
+        #     data = json.load(f)
+        data = read_json("model_version.json")
         return data["version"]
