@@ -5,8 +5,7 @@ from pathlib import Path
 
 from sklearn.preprocessing import MinMaxScaler
 import joblib
-# import fetch_data
-# df_APPL_new, df_TSLA_new, df_MSFT_new, df_NVDA_new = fetch_data.fetch_stock()
+
 
 def feat_eng(df_APPL_new, df_TSLA_new, df_MSFT_new, df_NVDA_new):
     logger.info("Engineering Features")
