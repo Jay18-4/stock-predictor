@@ -1,12 +1,13 @@
 import pandas as pd
 import numpy as np
-from app.core.logger import logger
+# from app.core.logger import logger
 from pathlib import Path
 from app.storage import read_csv, write_csv
 
 from sklearn.preprocessing import MinMaxScaler
 import joblib
-
+import logging
+logger = logging.getLogger(__name__)
 
 def feat_eng(df_APPL_new, df_TSLA_new, df_MSFT_new, df_NVDA_new):
     logger.info("Engineering Features")
