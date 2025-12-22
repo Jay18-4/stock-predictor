@@ -1,6 +1,6 @@
 import tensorflow as tf
 import joblib
-from storage import download_file
+from app.storage import download_file
 
 MODEL_KEY = "models/v3.2(sentiment)_lstm_stock_pediction.keras"
 LOCAL_MODEL_PATH = "/tmp/v3.2(sentiment)_lstm_stock_pediction.keras"
