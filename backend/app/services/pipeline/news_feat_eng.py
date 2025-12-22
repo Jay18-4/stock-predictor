@@ -1,5 +1,7 @@
 import pandas as pd
-from app.core.logger import logger
+# from app.core.logger import logger
+import logging
+logger = logging.getLogger(__name__)
 
 
 def compute_polarity(row):
