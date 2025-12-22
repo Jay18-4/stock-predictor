@@ -7,11 +7,12 @@ import json
 from datetime import date
 from pathlib import Path
 
-from app.core.logger import logger
+# from app.core.logger import logger
 from app.utils.time_utils import utc_now
 from app.storage import read_csv, write_csv, read_json, write_json
 from app.model_loader import get_model, get_scaler
-
+import logging
+logger = logging.getLogger(__name__)
 
 # --- RESHAPE X_INPUT ---
 def build_multi_stock_sequences(X, timesteps, num_stocks=4):
