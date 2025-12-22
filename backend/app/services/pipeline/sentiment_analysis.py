@@ -3,8 +3,10 @@ import tensorflow as tf
 from tqdm import tqdm
 import os
 
-from app.core.logger import logger
+# from app.core.logger import logger
 from app.finbert import load_finbert
+import logging
+logger = logging.getLogger(__name__)
 
 def tf_news_sentiment(df):
     logger.info(f"Conducting Sentiment Analysis")
