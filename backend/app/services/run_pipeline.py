@@ -2,8 +2,10 @@ import json
 from datetime import date
 from pathlib import Path
 
-from app.core.logger import logger
+# from app.core.logger import logger
 from app.storage import read_json, write_json
+import logging
+logger = logging.getLogger(__name__)
 
 from .pipeline import (
     fetch_data,
