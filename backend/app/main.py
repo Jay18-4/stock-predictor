@@ -6,7 +6,15 @@ import os
 from app.routers import predict, latest_data, history, news
 from app.middleware.logging_middleware import logging_middleware
 from app.middleware.error_middleware import error_middleware
-from app.core.logger import logger
+# from app.core.logger import logger
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(message)s"
+)
+
+logger = logging.getLogger(__name__)
 
 
 app = FastAPI(
