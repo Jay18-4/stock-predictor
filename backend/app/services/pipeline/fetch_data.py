@@ -3,7 +3,9 @@ import pandas as pd
 import requests, time
 from datetime import datetime, timedelta
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
-from app.core.logger import logger
+# from app.core.logger import logger
+import logging
+logger = logging.getLogger(__name__)
 
 #STOCK
 def fetch_stock():
