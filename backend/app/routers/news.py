@@ -1,8 +1,10 @@
 from fastapi import APIRouter, HTTPException # type: ignore
 from app.services.run_pipeline import PipelineRunner
 from app.schemas.sentiment import LatestNewsData
-from app.core.logger import logger
+# from app.core.logger import logger
 from app.utils.time_utils import utc_now
+import logging
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 pipeline = PipelineRunner()
