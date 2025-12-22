@@ -3,9 +3,11 @@ import pandas as pd
 from datetime import date
 from pathlib import Path
 
-from app.core.logger import logger
+# from app.core.logger import logger
 from app.services.run_pipeline import PipelineRunner
 from app.storage import read_csv, write_csv
+import logging
+logger = logging.getLogger(__name__)
 
 pipeline = PipelineRunner()
 
